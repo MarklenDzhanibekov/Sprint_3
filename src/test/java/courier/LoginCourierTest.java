@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class LoginCourierTest {
 
-    //подготовили лоиг и пароль для некоторых тестов
+    //подготовили логин и пароль для некоторых тестов
     String wrongPassword = RandomStringUtils.randomAlphabetic(10);
     String wrongLogin = RandomStringUtils.randomAlphabetic(10);
 
@@ -44,18 +44,34 @@ public class LoginCourierTest {
     }
 
     @Test
-    @DisplayName("Проверка, что поле логин является обязательным для логина курьера в систему")
-    public void testLoginFieldIsMandatoryToLogin () {
+    @DisplayName("Проверяем, что невозможно авторизоваться отправляя \"\" (пустоту) вместо логина")
+    public void testLoginWithEmptyLoginField () {
         PostCourierRequest courierCanLogin = new PostCourierRequest();
         ValidatableResponse response = courierCanLogin.loginCourier("", password);
         response.assertThat().body("message", equalTo("Недостаточно данных для входа")).statusCode(400);
     }
 
     @Test
-    @DisplayName("Проверка, что поле пароль является обязательным для логина курьера в систему")
-    public void testPasswordFieldIsMandatoryToLogin () {
+    @DisplayName("Проверяем, что невозможно авторизоваться отправляя null вместо логина")
+    public void testLoginWithNullToLogin () {
+        PostCourierRequest postCourierRequest = new PostCourierRequest();
+        ValidatableResponse response = postCourierRequest.loginCourier(null, password);
+        response.assertThat().body("message", equalTo("Недостаточно данных для входа")).statusCode(400);
+    }
+
+    @Test
+    @DisplayName("Проверяем, что невозможно авторизоваться отправляя \"\" (пустоту) вместо пароля")
+    public void testLoginWithEmptyPwField () {
         PostCourierRequest courierCanLogin = new PostCourierRequest();
         ValidatableResponse response = courierCanLogin.loginCourier(login, "");
+        response.assertThat().body("message", equalTo("Недостаточно данных для входа")).statusCode(400);
+    }
+
+    @Test
+    @DisplayName("Проверяем, что невозможно авторизоваться отправляя null вместо пароля")
+    public void testLoginWithNullPwField () {
+        PostCourierRequest courierCanLogin = new PostCourierRequest();
+        ValidatableResponse response = courierCanLogin.loginCourier(login, null);
         response.assertThat().body("message", equalTo("Недостаточно данных для входа")).statusCode(400);
     }
 

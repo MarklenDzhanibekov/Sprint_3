@@ -1,28 +1,29 @@
 package data;
 import io.qameta.allure.junit4.DisplayName;
 import model.CourierCredentialsModel;
-import model.OrderModel;
+import model.OrderModelWithBuilder;
 import org.apache.commons.lang3.RandomStringUtils;
-
-import java.time.LocalDateTime;
 import java.util.Random;
 
 public class GeneratedData {
 
-  @DisplayName("Метод для генерирование случайных данных для полей заказа")
-  public OrderModel dataForOrderCreation(String[] color) {
 
-    String firstName = RandomStringUtils.randomAlphabetic(10);
-    String lastName = RandomStringUtils.randomAlphabetic(10);
-    String address = RandomStringUtils.randomAlphabetic(10);
-    String metroStation = RandomStringUtils.randomAlphabetic(10);
-    String phone = RandomStringUtils.randomAlphabetic(10);
-    int rentTime = new Random().nextInt();
-    String deliveryDate = String.valueOf(LocalDateTime.now().toLocalDate());
-    String comment = RandomStringUtils.randomAlphabetic(10);
+  @DisplayName("Builder Метод для генерирование случайных данных для полей заказа")
+  public OrderModelWithBuilder dataForOrderCreation() {
 
-    OrderModel ordersData = new OrderModel(firstName, lastName, address, metroStation, phone, rentTime, deliveryDate, comment, color);
-    return ordersData;
+    OrderModelWithBuilder orderModelWithBuilder = new OrderModelWithBuilder.Builder()
+            .withFirstName(RandomStringUtils.randomAlphabetic(10))
+            .withLastName(RandomStringUtils.randomAlphabetic(10))
+            .withAddress(RandomStringUtils.randomAlphabetic(10))
+            .withMetroStation(RandomStringUtils.randomAlphabetic(10))
+            .withPhone(RandomStringUtils.randomAlphabetic(10))
+            .withRentTime(new Random().nextInt())
+            .withDeliveryDate("2020-04-02")
+            .withComment(RandomStringUtils.randomAlphabetic(10))
+            .withColor(new String[]{"Black"})
+            .build();
+
+    return orderModelWithBuilder;
   }
 
 

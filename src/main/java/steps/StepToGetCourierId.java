@@ -5,7 +5,6 @@ import io.restassured.response.ValidatableResponse;
 import model.CourierCredentialsModel;
 import requests.courier.PostCourierRequest;
 
-import static io.restassured.RestAssured.given;
 
 public class StepToGetCourierId {
     int courierId = 0;

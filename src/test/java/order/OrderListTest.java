@@ -4,7 +4,7 @@ import data.GeneratedData;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.CourierCredentialsModel;
-import model.OrderModel;
+import model.OrderModelWithBuilder;
 import model.orders.list.OrdersListModel;
 import org.junit.After;
 import org.junit.Test;
@@ -14,47 +14,45 @@ import requests.order.PostOrderRequest;
 import requests.order.PutOrderRequest;
 import steps.StepToDeleteCourier;
 import steps.StepToExtractOrderListBody;
-import steps.StepToGetOrderId;
-import steps.StepToGetOrderTrackNumber;
+import steps.StepToGetOrderTrackNumberAndId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 
 public class OrderListTest {
 
-        //Сгенерировали рандомные данные для заказа и для курьера
-        GeneratedData generatedData = new GeneratedData();
-        CourierCredentialsModel courierCredentials = generatedData.dataForCourier();
-        OrderModel orderData = generatedData.dataForOrderCreation(new String[]{"Black"});
+    //Сгенерировали рандомные данные для заказа и для курьера
+    GeneratedData generatedData = new GeneratedData();
+    CourierCredentialsModel courierCredentials = generatedData.dataForCourier();
+    OrderModelWithBuilder orderData = generatedData.dataForOrderCreation();
 
-        //Создаем курьера и заказ
-        PostCourierRequest postCourierRequest = new PostCourierRequest();
-        ValidatableResponse courierResponse = postCourierRequest.createNewCourierWithGeneratedData(courierCredentials);
-        PostOrderRequest postOrderRequest = new PostOrderRequest();
-        ValidatableResponse orderResponse = postOrderRequest.createTestNewOrderWithColor(orderData);
+    //Создаем курьера и заказ
+    PostCourierRequest postCourierRequest = new PostCourierRequest();
+    ValidatableResponse courierResponse = postCourierRequest.createNewCourierWithGeneratedData(courierCredentials);
+    PostOrderRequest postOrderRequest = new PostOrderRequest();
+    ValidatableResponse orderResponse = postOrderRequest.createNewOrder((orderData));
 
-        // получили ID курьера
-        int courierId = postCourierRequest.getCourierId(courierCredentials);
+    // получили ID курьера
+    int courierId = postCourierRequest.getCourierId(courierCredentials);
 
-        // получили Track номер заказа
-        StepToGetOrderTrackNumber stepToGetOrderTrackNumber = new StepToGetOrderTrackNumber();
-        int orderTrackNumber = stepToGetOrderTrackNumber.getOrderTrackNumber(orderResponse);
+    // получили Track номер заказа
+    StepToGetOrderTrackNumberAndId stepToGetOrderTrackNumberAndId = new StepToGetOrderTrackNumberAndId();
+    int orderTrackNumber = stepToGetOrderTrackNumberAndId.getOrderTrackNumber(orderResponse);
 
-        //получили ID номер заказа
-        GetOrderRequest getOrderRequest = new GetOrderRequest();
-        ValidatableResponse responseTrack = getOrderRequest.getOrderById(orderTrackNumber);
-        StepToGetOrderId stepToGetOrderId = new StepToGetOrderId();
-        int orderIdNumber = stepToGetOrderId.getOrderIdNumber(responseTrack);
+    //получили ID номер заказа
+    GetOrderRequest getOrderRequest = new GetOrderRequest();
+    ValidatableResponse responseTrack = getOrderRequest.getOrderById(orderTrackNumber);
+    int orderIdNumber = stepToGetOrderTrackNumberAndId.getOrderIdNumber(responseTrack);
 
     @After
-        public void courierDeletionAfterTests () {
-            StepToDeleteCourier stepToDeleteCourier = new StepToDeleteCourier();
-            stepToDeleteCourier.deletionCourier(courierId);
-        }
+    @DisplayName("Удаление курьера через аннотацию @After")
+    public void courierDeletionAfterTests () {
+        StepToDeleteCourier stepToDeleteCourier = new StepToDeleteCourier();
+        stepToDeleteCourier.deletionCourier(courierId);
+    }
 
     @Test
     @DisplayName("Проверяем список заказов по идентификатору курьера")
-
     public void acceptOrderTest () {
 
         //принимаем заказ
